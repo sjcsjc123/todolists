@@ -1,0 +1,17 @@
+server:
+  port: :8080
+
+logInfo:
+  path: logs
+
+mysql:
+  datasource:
+    username: root
+    password: root
+    addr: localhost:3306
+    dbname: todolists
+
+redis:
+  addr: localhost:6379
+  password:
+  dbname: 0
