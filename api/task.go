@@ -35,7 +35,7 @@ func ListTask(c *gin.Context) {
 
 func CreateTask(c *gin.Context) {
 	fromContext, _ := c.Get("userId")
-	userId := fromContext.(int)
+	userId := fromContext.(string)
 	var requestBody TaskRequestBody
 	err := c.ShouldBindWith(&requestBody, binding.JSON)
 	if err != nil {
@@ -63,7 +63,7 @@ func CreateTask(c *gin.Context) {
 func FinishTask(c *gin.Context) {
 	fromContext, _ := c.Get("userId")
 	query := c.Query("taskId")
-	userId := fromContext.(int)
+	userId := fromContext.(string)
 	var task model.Task
 	err := database.DB.Model(&model.Task{}).Where("user_id = ? and task_id = ?", userId, query).First(&task).Error
 	if err != nil {
