@@ -12,7 +12,6 @@ import (
 	"github.com/gin-gonic/gin/binding"
 	"net/http"
 	"regexp"
-	"strconv"
 	"time"
 )
 
@@ -46,12 +45,12 @@ func Login(c *gin.Context) {
 		return
 	}
 	token, err := utils.GenerateToken(user.UserId)
-	userId := strconv.Itoa(user.UserId)
-	database.RedisClient.Set(context.Background(), "token"+userId, token, time.Hour*24*7)
+	database.RedisClient.Set(context.Background(), "token"+user.UserId, token, time.Hour*24*7)
 	if err != nil {
 		c.JSON(http.StatusBadRequest, result.Error(errorCode.JwtToken, errorMsg.JwtTokenMsg))
 		logger.Error("jwt error:" + err.Error())
 	}
+	c.Header("Authorization", token)
 	c.JSON(http.StatusOK, result.Success("login success"))
 }
 

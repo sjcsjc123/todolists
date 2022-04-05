@@ -9,12 +9,12 @@ import (
 var jwtSecret = []byte(os.Getenv("JWT_SECRET"))
 
 type Claims struct {
-	UserId int `json:"userId"`
+	UserId string `json:"userId"`
 	jwt.StandardClaims
 }
 
 //GenerateToken 签发用户Token
-func GenerateToken(userId int) (string, error) {
+func GenerateToken(userId string) (string, error) {
 	nowTime := time.Now()
 	expireTime := nowTime.Add(24 * time.Hour)
 	claims := Claims{
@@ -30,7 +30,7 @@ func GenerateToken(userId int) (string, error) {
 }
 
 //ParseToken 验证用户token
-func GetUsernameFormToken(token string) (int, error) {
+func GetUsernameFormToken(token string) (string, error) {
 	tokenClaims, err := jwt.ParseWithClaims(token, &Claims{}, func(token *jwt.Token) (interface{}, error) {
 		return jwtSecret, nil
 	})
@@ -39,5 +39,5 @@ func GetUsernameFormToken(token string) (int, error) {
 			return claims.UserId, nil
 		}
 	}
-	return -1, err
+	return "", err
 }

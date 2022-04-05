@@ -5,8 +5,8 @@ import (
 )
 
 type Task struct {
-	TaskId            int `gorm:"primaryKey"`
-	UserId            int
+	TaskId            string `gorm:"primaryKey"`
+	UserId            string
 	Status            int
 	StatusDescription string
 	Title             string
@@ -15,7 +15,7 @@ type Task struct {
 }
 
 type User struct {
-	UserId   int `gorm:"primaryKey"`
+	UserId   string `gorm:"primaryKey"`
 	Username string
 	Password string
 	Phone    string

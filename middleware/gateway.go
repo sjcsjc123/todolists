@@ -11,13 +11,18 @@ import (
 	"github.com/gin-gonic/gin"
 	"net/http"
 	"regexp"
-	"strconv"
 )
 
 var logger = utils.Logger
 
 func ValidToken() gin.HandlerFunc {
 	return func(c *gin.Context) {
+		openid := c.GetHeader("openid")
+		if openid != "" {
+			c.Set("userId", openid)
+			c.Next()
+			return
+		}
 		//获取请求头中的token
 		token := c.GetHeader("Authorization")
 		logger.Info("parse token ...")
@@ -25,14 +30,13 @@ func ValidToken() gin.HandlerFunc {
 		userId, err := utils.GetUsernameFormToken(token)
 		if err != nil {
 			c.JSON(http.StatusBadRequest, result.Error(errorCode.JwtToken, errorMsg.JwtTokenMsg))
-			logger.Error("jwt token error" + err.Error())
+			logger.Error("jwt token error:" + err.Error())
 			c.Abort()
 			return
 		}
 		logger.Info("valid token ...")
-		key := strconv.Itoa(userId)
 		//从redis中获取token比对
-		redisToken, err := database.RedisClient.Get(context.Background(), "token"+key).Result()
+		redisToken, err := database.RedisClient.Get(context.Background(), "token"+userId).Result()
 		if err != nil {
 			c.JSON(http.StatusBadRequest, result.Error(errorCode.RedisError, errorMsg.RedisErrorMsg))
 			logger.Error("redis error:" + err.Error())

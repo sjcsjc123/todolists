@@ -13,4 +13,6 @@ const (
 	NoDownMsg     = "待完成"
 	Finish        = 0
 	FinishMsg     = "已完成"
+	WechatAppId   = "wechat.appId"
+	WechatSecret  = "wechat.secret"
 )
