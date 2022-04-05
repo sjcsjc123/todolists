@@ -1,0 +1,17 @@
+<!--index.wxml-->
+<view class="container">
+  <view wx:for="{{tasks}}" wx:key="taskId" style="width: 90%;height: auto;display: block;">
+    <view class="body-size">
+      <text style="margin-left: 2%;font-size:x-large;">{{item.Title}}:</text>
+      <text class="font-mysize">{{item.Content}}</text>
+    </view>
+    <view>
+      <view class="search_btn1">
+            <button id="{{item.TaskId}}" size="mini" type="primary" bindtap="finish" data-taskId="{{item.TaskId}}">完成</button>
+        </view>
+        <view class="search_btn2">
+            <button size="mini" type="primary" bindtap="delete">删除</button>
+        </view>
+    </view>
+  </view>
+</view>

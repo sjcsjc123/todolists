@@ -1,0 +1,9 @@
+<view class="container">
+  <view class="login-size">
+    <view class="text-size">
+      <text style="text-align: center;">小程序需要获取授权\n</text>
+    </view>
+    <button open-type="getPhoneNumber" bindgetphonenumber="getPhoneNumber">点击授权</button>
+  </view>
+</view>
+
