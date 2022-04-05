@@ -1,0 +1,21 @@
+server:
+  port: :xxxx
+
+logInfo:
+  path:
+
+mysql:
+  datasource:
+    username:
+    password:
+    addr:
+    dbname:
+
+redis:
+  addr:
+  password:
+  dbname:
+
+wechat:
+  appId:
+  secret:
