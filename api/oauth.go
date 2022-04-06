@@ -1,23 +1,15 @@
 package api
 
 import (
-	"TodoLists/common/config"
-	"TodoLists/common/constant"
 	"TodoLists/common/errorCode"
 	"TodoLists/common/errorMsg"
-	"TodoLists/common/model"
 	"TodoLists/common/result"
-	"TodoLists/database"
-	"bytes"
-	"encoding/json"
-	"fmt"
 	"github.com/gin-gonic/gin"
 	"github.com/gin-gonic/gin/binding"
-	"github.com/pkg/errors"
-	"github.com/tidwall/gjson"
+	"github.com/sjcsjc123/go-third-login/wxApplets"
+	_ "github.com/sjcsjc123/go-third-login/wxApplets"
 	_ "github.com/tidwall/gjson"
 	"net/http"
-	"net/url"
 )
 
 //小程序登录传入的数据
@@ -53,17 +45,41 @@ type WxAccessTokenResp struct {
 	ErrMsg      string `json:"errmsg"`
 }
 
-type RequestBody struct {
+/*type RequestBody struct {
 	Code string `json:"code"`
-}
+}*/
 
-type LoginReq struct {
+/*type LoginReq struct {
 	Code  string `json:"code"`
 	Phone string `json:"phone"`
+}*/
+
+type RequestBody struct {
+	WxLoginCode string `json:"wxLoginCode"`
+	PhoneCode   string `json:"phoneCode"`
+}
+
+type Result struct {
+	Phone  string
+	Openid string
 }
 
 func WxLoginHandler(c *gin.Context) {
-	var err error
+	var requestBody RequestBody
+	err := c.ShouldBindWith(&requestBody, binding.JSON)
+	if err != nil {
+		result.JsonError(c, err)
+	}
+	phone, openid, err := wxApplets.Login(requestBody.WxLoginCode, requestBody.PhoneCode)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, result.Error(errorCode.GetPhoneError, errorMsg.GetPhoneErrorMsg))
+		logger.Error("wx login fail:" + err.Error())
+	}
+	var resultData Result
+	resultData.Phone = phone
+	resultData.Openid = openid
+	c.JSON(http.StatusOK, result.Success(resultData))
+	/*var err error
 	var loginReq LoginReq
 	err = c.ShouldBindWith(&loginReq, binding.JSON)
 	if err != nil {
@@ -94,11 +110,11 @@ func WxLoginHandler(c *gin.Context) {
 	}
 	logger.Info("wx login success")
 	c.Header("openid", wxLoginResp.OpenId)
-	c.JSON(http.StatusOK, result.Success(wxLoginResp.OpenId))
+	c.JSON(http.StatusOK, result.Success(wxLoginResp.OpenId))*/
 }
 
 /*根据wx_code返回token ...*/
-func wxLogin(code string) (*WXLoginResp, error) {
+/*func wxLogin(code string) (*WXLoginResp, error) {
 	url := "https://api.weixin.qq.com/sns/jscode2session?appid=%s&secret=%s&js_code=%s&grant_type=authorization_code"
 	// 合成url, 这里的appId和secret是在微信公众平台上获取的
 	url = fmt.Sprintf(url, config.Conf.GetString(constant.WechatAppId), config.Conf.GetString(constant.WechatSecret), code)
@@ -195,7 +211,7 @@ func GetPhone(c *gin.Context) {
 	}
 	logger.Info("parse phone success ...")
 	c.JSON(http.StatusOK, result.Success(phoneNum))
-}
+}*/
 
 func PhoneError(c *gin.Context, err error) {
 	c.JSON(http.StatusOK, result.Error(errorCode.GetPhoneError, errorMsg.GetPhoneErrorMsg))

@@ -11,7 +11,7 @@ func NewRoutes() *gin.Engine {
 	r.POST("/login", api.Login)
 	r.POST("/register", api.Register)
 	r.POST("/oauth", api.WxLoginHandler)
-	r.POST("/getPhone", api.GetPhone)
+	//r.POST("/getPhone", api.GetPhone)
 	group := r.Group("/", middleware.ValidToken())
 	{
 		group.GET("/list", api.ListTask)
